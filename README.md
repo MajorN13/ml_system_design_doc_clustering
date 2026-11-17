@@ -14,9 +14,13 @@
 > Сокращения и термины расшифрованы в [глоссарии](#7-глоссарий).
 >
 > Числа, которые не прозвучали на встрече, но нужны для расчётов (число ТК, ставки, сроки), отмечены в тексте как **допущение**. Полный список допущений — в [разделе 6](#6-журнал-решений-допущения-и-открытые-вопросы).
+>
+> 🟡 — вопрос не решён или допущение не подтверждено. У каждого такого пункта есть Issue с планом, сроком и контрагентами.
+>
+> История изменений документа — в [CHANGELOG.md](CHANGELOG.md), живой реестр рисков — в [risks.md](risks.md).
 
 ## Оглавление
- 
+
 1. [Цели и предпосылки](#1-цели-и-предпосылки)
    - [1.1. Зачем идём в разработку продукта?](#11-зачем-идём-в-разработку-продукта)
    - [1.2. Бизнес-требования и ограничения](#12-бизнес-требования-и-ограничения)
@@ -44,7 +48,9 @@
 5. [Источники и исходники схем](#5-источники-и-исходники-схем)
 6. [Журнал решений, допущения и открытые вопросы](#6-журнал-решений-допущения-и-открытые-вопросы)
 7. [Глоссарий](#7-глоссарий)
+
 ---
+
 ## **1. Цели и предпосылки**
 
 ### **1.1. Зачем идём в разработку продукта?**
@@ -286,6 +292,18 @@
 **Почему Ward:** детерминирован, хорошо работает на малых выборках, даёт дендрограмму, которую бизнес умеет читать.
 **Альтернативы на этом этапе:** k-means (неустойчив на 86 объектах), GMM и HDBSCAN (на такой выборке много шума и мелких кластеров). Их сравниваем по тем же метрикам, но в MVP не берём.
 
+**Обоснование выбора (литература и опыт отрасли):**
+- **Мировой опыт.** Кластеризация магазинов сети по продажам, площади, демографии зоны охвата и конкурентам — стандартный приём для настройки ассортимента, маркетинга и сетевого планирования [[1]](#l1), [[2]](#l2), [[3]](#l3). Иерархическая кластеризация в этих работах служит опорным методом, с которым сравнивают остальные [[1]](#l1).
+- **Ward.** Метод минимизирует прирост внутрикластерной суммы квадратов на каждом шаге объединения [[4]](#l4); корректная реализация критерия разобрана в [[5]](#l5). Метод детерминирован: при одних данных и параметрах разбиение одно и то же, что нужно для воспроизводимости эталона квартала.
+- **Почему не k-means.** Результат зависит от случайной инициализации, а устойчивость разбиения на малой выборке нужно доказывать отдельно [[6]](#l6), [[7]](#l7). На 86 ТК это лишний источник «прыгающих» кластеров (риск R4).
+- **Почему не HDBSCAN в MVP.** Метод помечает часть объектов как шум [[8]](#l8), а у нас каждый ТК обязан получить кластер и CVP.
+- **CLR для долей категорий.** Доли, дающие в сумме 100 %, — композиционные данные; для них применяют лог-отношения [[9]](#l9), нули заменяют малым значением до преобразования [[10]](#l10).
+- **Взвешивание групп (MFA).** Деление признаков группы на √λ₁ — схема Multiple Factor Analysis [[11]](#l11), [[12]](#l12): ни одна группа признаков не доминирует.
+- **Число компонент PCA.** Правило накопленной дисперсии и отказ от критерия Кайзера — по обзорам правил остановки [[13]](#l13), [[14]](#l14).
+- **Метрики.** Silhouette [[15]](#l15), Davies–Bouldin [[16]](#l16), ARI [[17]](#l17); оценка устойчивости через повторные подвыборки — по [[6]](#l6), [[7]](#l7); там же приведены ориентиры: устойчивый кластер — среднее сходство ≥ 0,75 (у Hennig — по Jaccard). Стабилизация меток — венгерский алгоритм [[18]](#l18). Внешняя валидация — тест Краскела–Уоллиса [[19]](#l19) с поправкой Холма [[20]](#l20) и размером эффекта ε² [[21]](#l21).
+
+Полный список — в [разделе 5](#5-источники-и-исходники-схем).
+
 #### **Этап 5. Офлайн-оценка против бейзлайна** (нед. 7–8; DS) → **Gate 1**
 
 Все метрики считаются в одном пространстве признаков: стандартизированный дефолтный набор из 12 KPI. Это нужно, чтобы бейзлайн и ML сравнивались честно.
@@ -507,6 +525,36 @@ SLA приведены в разделе 1.2. Поддержка в рабочи
 ---
 
 ## **5. Источники и исходники схем**
+
+#### Литература
+
+Опыт отрасли:
+1. <a id="l1"></a>Agarwal K., Jain P., Rajnayak M. Comparative Analysis of Store Clustering Techniques in the Retail Industry // Proc. 8th Int. Conf. on Data Science, Technology and Applications (DATA 2019). P. 65–73. [doi:10.5220/0007917500650073](https://doi.org/10.5220/0007917500650073)
+2. <a id="l2"></a>Bermingham P., Hernandez T., Clarke I. Network Planning and Retail Store Segmentation: A Spatial Clustering Approach // International Journal of Applied Geospatial Research. 2013. Vol. 4(1). P. 67–79.
+3. <a id="l3"></a>Joseph L., Kuby M. The Location Types of US Retailers // International Journal of Applied Geospatial Research. 2016. Vol. 7(4). P. 1–22.
+
+Методы:
+
+4. <a id="l4"></a>Ward J. H. Hierarchical Grouping to Optimize an Objective Function // Journal of the American Statistical Association. 1963. Vol. 58(301). P. 236–244.
+5. <a id="l5"></a>Murtagh F., Legendre P. Ward's Hierarchical Agglomerative Clustering Method: Which Algorithms Implement Ward's Criterion? // Journal of Classification. 2014. Vol. 31. P. 274–295.
+6. <a id="l6"></a>Hennig C. Cluster-wise assessment of cluster stability // Computational Statistics & Data Analysis. 2007. Vol. 52(1). P. 258–271.
+7. <a id="l7"></a>Ben-Hur A., Elisseeff A., Guyon I. A stability based method for discovering structure in clustered data // Pacific Symposium on Biocomputing. 2002. Vol. 7. P. 6–17.
+8. <a id="l8"></a>Campello R. J. G. B., Moulavi D., Sander J. Density-Based Clustering Based on Hierarchical Density Estimates // PAKDD 2013. LNCS 7819. P. 160–172.
+9. <a id="l9"></a>Aitchison J. The Statistical Analysis of Compositional Data. London: Chapman & Hall, 1986.
+10. <a id="l10"></a>Martín-Fernández J. A., Barceló-Vidal C., Pawlowsky-Glahn V. Dealing with zeros and missing values in compositional data sets using nonparametric imputation // Mathematical Geology. 2003. Vol. 35(3). P. 253–278.
+11. <a id="l11"></a>Escofier B., Pagès J. Multiple factor analysis (AFMULT package) // Computational Statistics & Data Analysis. 1994. Vol. 18(1). P. 121–140.
+12. <a id="l12"></a>Abdi H., Williams L. J., Valentin D. Multiple factor analysis: principal component analysis for multitable and multiblock data sets // WIREs Computational Statistics. 2013. Vol. 5(2). P. 149–179.
+13. <a id="l13"></a>Jolliffe I. T., Cadima J. Principal component analysis: a review and recent developments // Phil. Trans. R. Soc. A. 2016. Vol. 374. 20150202.
+14. <a id="l14"></a>Peres-Neto P. R., Jackson D. A., Somers K. M. How many principal components? Stopping rules for determining the number of non-trivial axes revisited // Computational Statistics & Data Analysis. 2005. Vol. 49(4). P. 974–997.
+15. <a id="l15"></a>Rousseeuw P. J. Silhouettes: a graphical aid to the interpretation and validation of cluster analysis // Journal of Computational and Applied Mathematics. 1987. Vol. 20. P. 53–65.
+16. <a id="l16"></a>Davies D. L., Bouldin D. W. A Cluster Separation Measure // IEEE Transactions on Pattern Analysis and Machine Intelligence. 1979. Vol. PAMI-1(2). P. 224–227.
+17. <a id="l17"></a>Hubert L., Arabie P. Comparing partitions // Journal of Classification. 1985. Vol. 2. P. 193–218.
+18. <a id="l18"></a>Kuhn H. W. The Hungarian method for the assignment problem // Naval Research Logistics Quarterly. 1955. Vol. 2. P. 83–97.
+19. <a id="l19"></a>Kruskal W. H., Wallis W. A. Use of Ranks in One-Criterion Variance Analysis // Journal of the American Statistical Association. 1952. Vol. 47(260). P. 583–621.
+20. <a id="l20"></a>Holm S. A Simple Sequentially Rejective Multiple Test Procedure // Scandinavian Journal of Statistics. 1979. Vol. 6(2). P. 65–70.
+21. <a id="l21"></a>Tomczak M., Tomczak E. The need to report effect size estimates revisited. An overview of some recommended measures of effect size // Trends in Sport Sciences. 2014. Vol. 21(1). P. 19–25.
+
+#### Исходники схем
 - `diagrams/draw.py` — схема этапов, план-график, матрицы рисков;
 - `diagrams/risk_tree.py` — дерево причин рисков;
 - `diagrams/arch.py` — схема архитектуры.
@@ -522,16 +570,24 @@ SLA приведены в разделе 1.2. Поддержка в рабочи
 2. Экономика: прямой эффект 0,25–0,43 млн ₽ в год подтверждён.
 3. Пользователи, ЛПР, бейзлайн, критерии пилота, данные и риски обсуждены. Детали зафиксированы в разделах 1.2, 2.3, 3 и 4.9.
 
-**Допущения (подтверждаются на этапе 0):**
-- в сети 92 гипермаркета, из них около 86 с историей от 12 месяцев;
-- 64 признака в 6 группах, названия таблиц и владельцы — по разделу 2.3;
-- полная стоимость часа разработки — 1 500 ₽, трудозатраты — 300 ч;
-- стоимость эксплуатации — 0,09 млн ₽ в год;
-- состав экспертов (5) и пилотного комитета.
+> [!WARNING]
+> **Допущения (подтверждаются на этапе 0).** Каждое заведено как Issue с меткой `white-spot`: план, срок, с кем встречаемся, критерий закрытия.
+>
+> | | Допущение | Issue | Срок | Контрагент |
+> |---|---|---|---|---|
+> | 🟡 | в сети 92 гипермаркета, из них около 86 с историей от 12 месяцев | [#1](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/1) | нед. 2 | Data Office |
+> | 🟡 | 64 признака в 6 группах, названия таблиц и владельцы — по разделу 2.3 | [#2](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/2) | нед. 2 | Data Office, CRM-команда, гео-команда, коммерческая аналитика |
+> | 🟡 | полная стоимость часа разработки — 1 500 ₽, трудозатраты — 300 ч | [#3](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/3) | нед. 2 | финансовый контроллинг, руководитель DS |
+> | 🟡 | стоимость эксплуатации — 0,09 млн ₽ в год | [#4](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/4) | нед. 2 | DevOps / владелец k8s-платформы |
+> | 🟡 | состав экспертов (5) и пилотного комитета | [#5](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/5) | нед. 2 | директор по CVP (ЛПР), PO |
 
-**Открытые вопросы:**
-- нужен ли регламент ручного переноса ТК между кластерами после утверждения эталона;
-- когда начинать оценку эффекта CVP на выручку (кандидат — следующая итерация).
+> [!WARNING]
+> **Открытые вопросы.**
+>
+> | | Вопрос | Issue | Срок | Контрагент |
+> |---|---|---|---|---|
+> | 🟡 | нужен ли регламент ручного переноса ТК между кластерами после утверждения эталона | [#6](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/6) | Gate 1 (нед. 8) | PO, ЛПР, аналитики CVP |
+> | 🟡 | когда начинать оценку эффекта CVP на выручку (кандидат — следующая итерация) | [#7](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/7) | Gate 2 (нед. 16) | PO, ЛПР, финансы |
 
 ---
 
