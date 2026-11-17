@@ -285,6 +285,7 @@ ML-метрики и метрики сервиса:
 | Этап 0: требования, подтверждение допущений | 1–2 | 16.11–27.11.2026 |
 | Новогодняя пауза | — | до 10.01.2027 включительно |
 | Gate 1 | конец 8 | 15.01.2027 |
+| Готовность к тестам в dev: решение по общему PostgreSQL ([#34](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/34)) | конец 10 | 29.01.2027 |
 | Пилот | 12–16 | 08.02–12.03.2027 |
 | Gate 2 | конец 16 | 12.03.2027 |
 | Вывод в прод, базовый сценарий | 17–18 | 15.03–26.03.2027 |
@@ -708,7 +709,7 @@ SLA приведены в разделе 1.2. Поддержка в рабочи
 > | 🟡 | пороги межквартальной стабильности (≤ 15 %) и ручных переносов (≤ 10 %) (§1.2) | [#19](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/19) | нед. 2 | PO |
 > | 🟡 | порог Silhouette ≥ 0,20, пересмотр по итогам EDA (§1.2) | [#20](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/20) | Gate 1 (нед. 8) | DS lead, PO |
 > | 🟡 | загрузка файла от бизнеса в S3: кто, как, где проверка шаблона (§4.1, белое пятно 1) | [#33](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/33) | нед. 2 | отдел коммерческой аналитики, DE |
-> | 🟡 | общий PostgreSQL — единая точка отказа: выделенный экземпляр или реплика (§4.1, белое пятно 2) | [#34](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/34) | нед. 10 | владелец корпоративного PostgreSQL, MLE |
+> | 🟡 | общий PostgreSQL — единая точка отказа: выделенный экземпляр или реплика (§4.1, белое пятно 2) | [#34](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/34) | нед. 10 (29.01.2027) | владелец корпоративного PostgreSQL, MLE |
 > | 🟡 | согласование архитектуры с ИБ: SSO, секреты, учётки (§4.1, белое пятно 3) | [#35](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/35) | нед. 2 (ревью), нед. 17 (до прода) | ИБ, MLE |
 
 > [!WARNING]
