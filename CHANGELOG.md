@@ -12,6 +12,20 @@
 
 ## [Unreleased]
 
+## [2.4] — 2026-11-18
+
+По итогам третьего ревью.
+
+### Изменено
+- #34 (общий PostgreSQL) привязан к новой вехе «Готовность к тестам в dev» — 29.01.2027, конец недели 10 (#36).
+- Согласование с ИБ разбито на два Issue: ревью архитектуры на этапе 0 (#35) и финальное согласование до прода (#41, веха «Вывод в прод») (#37).
+- Схема архитектуры: подпись связи API ↔ S3 и метка «3» не перекрывают рамки и подписи (#40); презентация пересобрана.
+- Статус в шапке README — v2.4.
+
+### Добавлено
+- `risks.md`: пересмотр R2, R10 и R14 со ссылками на Issues белых пятен (#39).
+- В версии 2.3 упомянут #31 (#38).
+
 ## [2.3] — 2026-11-18
 
 По итогам второго ревью.
@@ -23,6 +37,7 @@
 - Статус в шапке — v2.3 (#25).
 - Вехи в Issues: Этап 0 — 27.11.2026, Gate 1 — 15.01.2027, Gate 2 — 12.03.2027 (#28, #29).
 - Презентация обновлена под v2.3 (#32).
+- Отмечены чекбоксы в закрытых review-Issues (#31). При этом из-за кодировки в Windows PowerShell тексты закрытых Issues оказались испорчены; восстановлены в тот же день.
 
 ### Добавлено
 - Дата старта (16.11.2026) и календарь вех с новогодней паузой (#28, #29).
@@ -75,7 +90,8 @@
 ### Добавлено
 - Общая концепция, формат
 
-[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.3...HEAD
+[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.4...HEAD
+[2.4]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.3...doc-v2.4
 [2.3]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.2...doc-v2.3
 [2.2]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.1...doc-v2.2
 [2.1]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.0...doc-v2.1
