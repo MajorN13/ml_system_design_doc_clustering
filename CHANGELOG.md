@@ -12,6 +12,15 @@
 
 ## [Unreleased]
 
+## [2.6] — 2026-11-18
+
+По итогам пятого ревью.
+
+### Изменено
+- `risks.md`: пересмотр R9 после решения пускать реальные данные в dev на пилоте — новый индикатор и меры, оценка без изменений с обоснованием (#49).
+- У #2 и #5 один срок, совпадающий с вехой «Этап 0»; второй срок перенесён в план (#48).
+- Статус в шапке README — v2.6.
+
 ## [2.5] — 2026-11-18
 
 По итогам четвёртого ревью.
@@ -105,7 +114,8 @@
 ### Добавлено
 - Общая концепция, формат
 
-[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.5...HEAD
+[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.6...HEAD
+[2.6]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.5...doc-v2.6
 [2.5]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.4...doc-v2.5
 [2.4]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.3...doc-v2.4
 [2.3]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.2...doc-v2.3
