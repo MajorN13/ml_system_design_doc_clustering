@@ -12,6 +12,24 @@
 
 ## [Unreleased]
 
+## [2.3] — 2026-11-18
+
+По итогам второго ревью.
+
+### Изменено
+- Схема этапов: три маршрута доработки на Gate 2, как в §3.2 (#22).
+- План-график: даты недель, новогодняя пауза до 11.01.2027, запас до недели 21 (#23). В версии 2.2 запас был описан только в тексте.
+- Схема архитектуры: `GET /versions`, запись Excel-отчётов в S3 (#30).
+- Статус в шапке — v2.3 (#25).
+- Вехи в Issues: Этап 0 — 27.11.2026, Gate 1 — 15.01.2027, Gate 2 — 12.03.2027 (#28, #29).
+- Презентация обновлена под v2.3 (#32).
+
+### Добавлено
+- Дата старта (16.11.2026) и календарь вех с новогодней паузой (#28, #29).
+- Белые пятна на схеме архитектуры и в §4.1 (#24); Issues #33, #34, #35.
+- Экономика и ограниченный риск ML-части в §1.1 (#26); расшифровка ставки 630 ₽/ч (#27).
+- Шрифты для перерисовки схем в `fonts/` (#21).
+
 ## [2.2] — 2026-11-18
 
 По итогам ревью дизайн-дока.
@@ -57,7 +75,8 @@
 ### Добавлено
 - Общая концепция, формат
 
-[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.2...HEAD
+[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.3...HEAD
+[2.3]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.2...doc-v2.3
 [2.2]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.1...doc-v2.2
 [2.1]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.0...doc-v2.1
 [2.0]: https://github.com/MajorN13/ml_system_design_doc_clustering/releases/tag/doc-v2.0
