@@ -99,12 +99,12 @@ def row_width(items):
     return sum((0.9 if i[0].startswith("G") else BW) for i in items) + GAP * (len(items) - 1)
 
 
-def stages_row(items, fname, loop):
+def stages_row(items, fname, loop, below=0.45):
     W = row_width(items) + 0.2
-    H = BH + 0.75
+    H = BH + 0.3 + below
     fig = plt.figure(figsize=(W, H))
     ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
-    y0 = 0.45
+    y0 = below
     pos = draw_row(ax, items, 0.1, y0)
     loop(ax, pos, y0)
     fig.savefig(f"{OUT}/{fname}", dpi=DPI, facecolor="white")
@@ -124,29 +124,49 @@ def loop1(ax, pos, y0):
     ax.text(0.1, y0 + BH + 0.18, "Подготовка и моделирование", fontsize=7.5, fontweight="bold", color=BLUE)
 
 
+# Маршруты доработки на Gate 2 (README, §3.2): (индекс этапа в ROW2 или None — к этапу 4 в первом ряду, подпись)
+REWORK = [
+    (2, "Q3, Q4 (время цикла, использование) → этап 8: UI, отчёт, обучение"),
+    (1, "p95, доля ошибок → этапы 7–9: производительность API, нагрузочные тесты"),
+    (None, "ML-метрики, Q1, Q2 (качество, интерпретируемость) → этап 4: модель"),
+]
+
+
 def loop2(ax, pos, y0, title="Сервис, пилот и запуск   (Этап 12, документация и Issues, идёт сквозным потоком)"):
     g = pos[5]
     ax.text(g[3] + 0.47, y0 + BH / 2 + 0.06, "go", color=GREEN, fontsize=5.6, fontweight="bold", va="bottom")
-    arrow(ax, (g[3], y0 + BH / 2 - 0.42), (g[3], y0 - 0.25), color=RED, style="-")
-    arrow(ax, (g[3], y0 - 0.25), (pos[0][0] + 0.02, y0 - 0.25), color=RED, style="-|>")
-    ax.text(pos[0][0] + 0.06, y0 - 0.21,
-            "доработка → к этапу 4 (+3 нед.);   no-go → план Б: витрина + правила + отчёт без ML",
-            color=RED, fontsize=5.4, ha="left", va="bottom")
+    step = 0.15
+    lanes = [y0 - 0.14 - step * i for i in range(len(REWORK))]
+    ax.plot([g[3], g[3]], [y0 + BH / 2 - 0.42, lanes[-1]], color=RED, lw=0.7)
+    for (idx, label), yl in zip(REWORK, lanes):
+        if idx is None:
+            xt = pos[0][0] + 0.02
+            arrow(ax, (g[3], yl), (xt, yl), color=RED)
+            ax.text(xt + 0.04, yl + 0.025, label, color=RED, fontsize=5.2, ha="left", va="bottom")
+        else:
+            xt = pos[idx][3]
+            ax.plot([g[3], xt], [yl, yl], color=RED, lw=0.7)
+            arrow(ax, (xt, yl), (xt, y0), color=RED)
+            ax.text(xt + 0.05, yl + 0.025, label, color=RED, fontsize=5.2, ha="left", va="bottom")
+    ax.text(g[3] + 0.06, y0 - 0.06, "доработка: +3 нед., не больше 1 раза", color=RED, fontsize=5.2,
+            fontweight="bold", ha="left", va="top")
+    ax.text(g[3] + 0.06, lanes[-1] + 0.03, "no-go → план Б: витрина +\nправила + отчёт без ML", color=RED,
+            fontsize=5.2, fontweight="bold", ha="left", va="bottom", linespacing=1.1)
     ax.text(0.1, y0 + BH + 0.18, title, fontsize=7.5, fontweight="bold", color=BLUE)
 
 
 stages_row(ROW1, "stages_row1.png", loop1)
-stages_row(ROW2, "stages_row2.png", loop2)
+stages_row(ROW2, "stages_row2.png", loop2, below=0.62)
 
 # Полная схема для README: два ряда друг под другом
 W = max(row_width(ROW1), row_width(ROW2)) + 0.2
-H = 2 * (BH + 0.75) + 0.45
+H = 2 * (BH + 0.75) + 0.6
 fig = plt.figure(figsize=(W, H))
 ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
 yA = H - BH - 0.35
 pA = draw_row(ax, ROW1, 0.1, yA)
 loop1(ax, pA, yA)
-yB = 0.85
+yB = 1.0
 pB = draw_row(ax, ROW2, 0.1, yB)
 loop2(ax, pB, yB, title="Сервис, пилот и запуск")
 # переход G1 -> этап 6
@@ -268,12 +288,12 @@ matrix("risk_matrix.png")
 matrix("risk_matrix_residual.png", residual=True)
 
 # ---------------------------------------------------------------- компактные этапы для слайдов
-def slide_stages(items, fname, footer):
-    W, H = 5.5, 1.58
+def slide_stages(items, fname, footer, below=0.4):
+    W, H = 5.5, 1.18 + below
     bw, gap, bh = 0.66, 0.12, 1.08
     fig = plt.figure(figsize=(W, H))
     ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
-    y0 = 0.4
+    y0 = below
     x = 0.06
     centers = []
     for it in items:
@@ -335,15 +355,28 @@ def f1(ax, c, y0, bh):
 
 def f2(ax, c, y0, bh):
     g = c[5]
-    yl = 0.14
-    ax.plot([g[2], g[2]], [y0 + bh / 2 - 0.36, yl], color=RED, lw=0.7)
-    ax.plot([g[2], c[0][0] + 0.02], [yl, yl], color=RED, lw=0.7)
-    ax.text(c[0][0] + 0.04, yl + 0.03, "доработка → этап 4 (+3 нед.);  no-go → план Б: витрина + правила без ML",
-            color=RED, fontsize=5, ha="left", va="bottom")
+    short_lab = ["Q3, Q4 → этап 8: UI и процесс", "p95, ошибки → этапы 7–9", "ML-метрики, Q1, Q2 → этап 4"]
+    step = 0.15
+    lanes = [y0 - 0.12 - step * i for i in range(3)]
+    ax.plot([g[2], g[2]], [y0 + bh / 2 - 0.36, lanes[-1]], color=RED, lw=0.7)
+    for (idx, _), lab, yl in zip(REWORK, short_lab, lanes):
+        if idx is None:
+            xt = c[0][0] + 0.02
+            arrow(ax, (g[2], yl), (xt, yl), color=RED)
+            ax.text(xt + 0.04, yl + 0.02, lab, color=RED, fontsize=5, ha="left", va="bottom")
+        else:
+            xt = c[idx][2]
+            ax.plot([g[2], xt], [yl, yl], color=RED, lw=0.7)
+            arrow(ax, (xt, yl), (xt, y0), color=RED)
+            ax.text(xt + 0.04, yl + 0.02, lab, color=RED, fontsize=5, ha="left", va="bottom")
+    ax.text(g[2] + 0.05, y0 - 0.04, "доработка:\n+3 нед., 1 раз", color=RED, fontsize=4.8, fontweight="bold",
+            ha="left", va="top", linespacing=1.05)
+    ax.text(g[2] + 0.05, lanes[-1] + 0.02, "no-go →\nплан Б", color=RED, fontsize=4.8, fontweight="bold",
+            ha="left", va="bottom", linespacing=1.05)
     ax.text(g[2] + 0.38, y0 + bh / 2 + 0.04, "go", color=GREEN, fontsize=5.3, fontweight="bold", ha="center",
             va="bottom")
 
 
 slide_stages(short(ROW1), "stages_slide1.png", f1)
-slide_stages(short(ROW2), "stages_slide2.png", f2)
+slide_stages(short(ROW2), "stages_slide2.png", f2, below=0.56)
 print("slides done")
