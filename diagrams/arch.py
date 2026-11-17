@@ -101,8 +101,8 @@ arr((ing["cx"], ing["b"]), (ui["cx"], ui["t"]), both=True)
 arr((ui["cx"], ui["b"]), (api["cx"], api["t"]), both=True, label="REST", loff=(0.13, -0.05))
 # API читает витрину и записывает в S3 Excel-отчёты (README, §4.2 и §4.8)
 arr((s3["r"], s3["cy"] - 0.15), (api["l"], api["cy"] + 0.2), both=True)
-ax.text(4.3, 2.03, "чтение витрины,\nзапись Excel-отчётов", fontsize=4.8, color=GRAY, style="italic", ha="right",
-        va="center", linespacing=1.1)
+ax.text(3.72, 2.03, "↔ API: чтение витрины,\nзапись Excel-отчётов", fontsize=4.8, color=GRAY, style="italic",
+        ha="center", va="center", linespacing=1.1)
 arr((api["l"], api["cy"] - 0.1), (pg["r"], pg["cy"] - 0.05), both=True, label="кэш, журнал", loff=(0, 0.03))
 
 # ---- пользователь
@@ -128,7 +128,7 @@ ax.text(ci["l"] + 0.49, 0.69, "деплой", fontsize=4.8, color=GREEN, ha="lef
 # ---- белые пятна
 spot(S[3]["r"] - 0.04, S[3]["t"] - 0.03, 1)
 spot(pg["r"] - 0.02, pg["t"] - 0.05, 2)
-spot(ing["r"] - 0.04, ing["t"] - 0.03, 3)
+spot(ing["l"] + 0.04, ing["t"] - 0.03, 3)
 ax.text(0.1, -0.1, "Белые пятна", fontsize=6.3, fontweight="bold", color=AMBER, va="center")
 spots = ["кто и как загружает файл от бизнеса в S3,\nпроверка шаблона (риск R2)",
          "общий PostgreSQL — единая точка отказа\nдля API (журнал, кэш, версия)",
