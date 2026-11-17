@@ -12,6 +12,21 @@
 
 ## [Unreleased]
 
+## [2.5] — 2026-11-18
+
+По итогам четвёртого ревью.
+
+### Изменено
+- §1.1 без порогов и текущих значений: время цикла и Q5 — ссылкой на §1.2 (#42).
+- Пилотный комитет: PO и руководитель группы коммерческой аналитики — один человек, лишнее упоминание убрано (#44).
+- Этап 0 переименован в «Подтверждение допущений»: требования согласованы 24.10.2026, до старта; схема этапов, план-график и RACI обновлены (#46).
+- Легенда: 🟡 и блоки «Warning» прямо названы заменой жёлтого выделения (#47).
+- Презентация обновлена; статус в шапке README — v2.5.
+
+### Добавлено
+- §1.4: перечень блоков данных (#43).
+- §3.1, §3.3: контур пилота — dev на реальных данных, условия доступа и связь с ревью ИБ этапа 0 (#45).
+
 ## [2.4] — 2026-11-18
 
 По итогам третьего ревью.
@@ -90,7 +105,8 @@
 ### Добавлено
 - Общая концепция, формат
 
-[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.4...HEAD
+[Unreleased]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.5...HEAD
+[2.5]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.4...doc-v2.5
 [2.4]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.3...doc-v2.4
 [2.3]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.2...doc-v2.3
 [2.2]: https://github.com/MajorN13/ml_system_design_doc_clustering/compare/doc-v2.1...doc-v2.2
