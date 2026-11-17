@@ -191,31 +191,62 @@ TASKS = [
     ("6 Отчёт и профили", 8, 9, "svc"), ("7 API-сервис", 8, 10, "svc"),
     ("8 UI, SSO, логи", 9, 11, "svc"), ("9 Тесты в dev", 11, 12, "svc"),
     ("10 Пилот", 12, 16, "pilot"), ("11 Прод и мониторинг", 17, 18, "prod"),
+    ("Запас: доработка, сдвиги", 19, 21, "buf"),
     ("12 Документация", 1, 18, "doc"),
 ]
-COL = {"prep": "#7A93AC", "model": BLUE, "svc": "#3C6E9F", "pilot": GREEN, "prod": "#5A5A5A", "doc": "#B8C7D6"}
+COL = {"prep": "#7A93AC", "model": BLUE, "svc": "#3C6E9F", "pilot": GREEN, "prod": "#5A5A5A", "doc": "#B8C7D6",
+       "buf": "#F3D9D9"}
 NAMES = {"prep": "подготовка", "model": "моделирование", "svc": "сервис", "pilot": "пилот", "prod": "прод",
-         "doc": "документация"}
-fig, ax = plt.subplots(figsize=(5.9, 2.75))
+         "doc": "документация", "buf": "запас"}
+# Неделя 1 — 16.11.2026; новогодняя пауза до 10.01.2027 в счёт недель не идёт (README, §2.2)
+import datetime as _dt
+NWEEKS, PAUSE_AFTER, PAUSE_W = 21, 7, 0.75
+
+
+def wx(w):  # координата недели с учётом паузы
+    return w + (PAUSE_W if w > PAUSE_AFTER else 0)
+
+
+def wstart(w):
+    d = _dt.date(2026, 11, 16) + _dt.timedelta(weeks=w - 1)
+    return d + _dt.timedelta(weeks=1) if w > PAUSE_AFTER else d  # пауза — одна календарная неделя (04.01–10.01)
+
+
+fig, ax = plt.subplots(figsize=(6.4, 3.05))
 for i, (name, a, b, k) in enumerate(TASKS):
     y = len(TASKS) - 1 - i
-    ax.barh(y, b - a + 1, left=a - 0.5, height=0.62, color=COL[k], edgecolor="none")
-for wk, lab in [(8.5, "Gate 1"), (16.5, "Gate 2")]:
-    ax.axvline(wk, color=AMBER, lw=0.8, ls="--")
-    ax.text(wk + 0.12, len(TASKS) - 0.35, lab, color=AMBER, fontsize=6, ha="left", va="bottom", fontweight="bold")
+    if k == "buf":
+        ax.barh(y, wx(b) - wx(a) + 1, left=wx(a) - 0.5, height=0.62, color=COL[k], edgecolor=RED, lw=0.5,
+                hatch="////")
+    else:
+        ax.barh(y, wx(b) - wx(a) + 1, left=wx(a) - 0.5, height=0.62, color=COL[k], edgecolor="none")
+# пауза
+p0, p1 = wx(PAUSE_AFTER) + 0.5, wx(PAUSE_AFTER + 1) - 0.5
+ax.axvspan(p0, p1, color="white", zorder=3)
+ax.axvspan(p0, p1, fc="none", ec="#999999", hatch="....", lw=0, zorder=3)
+ax.text((p0 + p1) / 2, len(TASKS) / 2 - 0.5, "праздники,\nпауза до\n11.01.2027", rotation=90, fontsize=4.6,
+        color=GRAY, ha="center", va="center", zorder=4,
+        bbox=dict(fc="white", ec="none", pad=0.8))
+for w, lab, col in [(8, "Gate 1 · 15.01", AMBER), (16, "Gate 2 · 12.03", AMBER), (21, "срок · 16.04", RED)]:
+    ax.axvline(wx(w) + 0.5, color=col, lw=0.8, ls="--")
+    ax.text(wx(w) + 0.5 + (0.12 if w < 21 else -0.12), len(TASKS) - 0.35, lab, color=col, fontsize=5.6,
+            ha="left" if w < 21 else "right", va="bottom", fontweight="bold")
 ax.set_yticks(range(len(TASKS)))
 ax.set_yticklabels([t[0] for t in TASKS][::-1], fontsize=6)
-ax.set_xticks(range(1, 19)); ax.set_xticklabels(range(1, 19), fontsize=5.5)
-ax.set_xlim(0.4, 18.6); ax.set_ylim(-0.6, len(TASKS) + 0.2)
-ax.set_xlabel("неделя проекта", fontsize=6)
-for s in ["top", "right"]:
-    ax.spines[s].set_visible(False)
+ax.set_xticks([wx(w) for w in range(1, NWEEKS + 1)])
+ax.set_xticklabels([f"{w}\n{wstart(w):%d.%m}" for w in range(1, NWEEKS + 1)], fontsize=4.6, linespacing=1.15)
+ax.set_xlim(0.4, wx(NWEEKS) + 0.6); ax.set_ylim(-0.6, len(TASKS) + 0.3)
+ax.set_xlabel("рабочая неделя проекта и дата её начала (неделя 1 — 16.11.2026)", fontsize=6)
+for s_ in ["top", "right"]:
+    ax.spines[s_].set_visible(False)
 ax.spines["left"].set_linewidth(0.5); ax.spines["bottom"].set_linewidth(0.5)
 ax.tick_params(width=0.5, length=2)
 ax.grid(axis="x", color="#E5E5E5", lw=0.4); ax.set_axisbelow(True)
 from matplotlib.patches import Patch
-ax.legend(handles=[Patch(color=COL[k], label=NAMES[k]) for k in COL], fontsize=5.5, ncol=6, frameon=False,
-          loc="upper center", bbox_to_anchor=(0.45, -0.17), handlelength=1, columnspacing=1)
+ax.legend(handles=[Patch(fc=COL[k], ec=RED if k == "buf" else "none", hatch="////" if k == "buf" else None,
+                         lw=0.5, label=NAMES[k]) for k in COL],
+          fontsize=5.5, ncol=7, frameon=False, loc="upper center", bbox_to_anchor=(0.45, -0.22), handlelength=1,
+          columnspacing=1)
 fig.tight_layout(pad=0.3)
 fig.savefig(f"{OUT}/roadmap.png", dpi=DPI, facecolor="white")
 plt.close(fig)
