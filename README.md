@@ -288,6 +288,7 @@ ML-метрики и метрики сервиса:
 | Готовность к тестам в dev: решение по общему PostgreSQL ([#34](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/34)) | конец 10 | 29.01.2027 |
 | Пилот | 12–16 | 08.02–12.03.2027 |
 | Gate 2 | конец 16 | 12.03.2027 |
+| Финальное согласование с ИБ ([#41](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/41)) | 17 | до 19.03.2027 |
 | Вывод в прод, базовый сценарий | 17–18 | 15.03–26.03.2027 |
 | Срок для бизнеса с учётом запаса | 21 | не позже 16.04.2027 |
 
@@ -482,7 +483,7 @@ A/B-тест в классическом виде здесь невозможе�
 **Белые пятна на схеме** (жёлтые метки 1–3). Решения пока нет; у каждого пункта есть Issue с планом и контрагентами:
 1. 🟡 [#33](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/33) **Файл от бизнеса.** Не определено, кто и как загружает квартальный файл в S3 (вручную через UI, общую папку или почту) и где проверяется шаблон. Это единственный ручной вход в DAG (риск R2).
 2. 🟡 [#34](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/34) **Общий PostgreSQL.** Журнал, кэш и `current_version` лежат в общем корпоративном экземпляре — единой точке отказа для API. Не решено, нужен ли выделенный экземпляр или реплика и какой RTO обещает владелец.
-3. 🟡 [#35](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/35) **Согласование с ИБ.** Схема SSO, хранение секретов (k8s secrets или Vault) и read-only учётки к источникам ещё не согласованы с ИБ (риск R14).
+3. 🟡 [#35](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/35), [#41](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/41) **Согласование с ИБ.** Схема SSO, хранение секретов (k8s secrets или Vault) и read-only учётки к источникам ещё не согласованы с ИБ (риск R14). Два шага: ревью архитектуры на этапе 0 (#35, нед. 2) и финальное согласование перед выводом в прод (#41, нед. 17).
 
 **Режим работы:** расчёт по запросу (online processing) на заранее подготовленных квартальных данных (offline data). Batch-переобучения нет: модель — это алгоритм, который пересчитывается на каждый запрос.
 
@@ -710,7 +711,8 @@ SLA приведены в разделе 1.2. Поддержка в рабочи
 > | 🟡 | порог Silhouette ≥ 0,20, пересмотр по итогам EDA (§1.2) | [#20](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/20) | Gate 1 (нед. 8) | DS lead, PO |
 > | 🟡 | загрузка файла от бизнеса в S3: кто, как, где проверка шаблона (§4.1, белое пятно 1) | [#33](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/33) | нед. 2 | отдел коммерческой аналитики, DE |
 > | 🟡 | общий PostgreSQL — единая точка отказа: выделенный экземпляр или реплика (§4.1, белое пятно 2) | [#34](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/34) | нед. 10 (29.01.2027) | владелец корпоративного PostgreSQL, MLE |
-> | 🟡 | согласование архитектуры с ИБ: SSO, секреты, учётки (§4.1, белое пятно 3) | [#35](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/35) | нед. 2 (ревью), нед. 17 (до прода) | ИБ, MLE |
+> | 🟡 | ревью архитектуры в ИБ: SSO, секреты, учётки (§4.1, белое пятно 3) | [#35](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/35) | нед. 2 (27.11.2026) | ИБ, MLE |
+> | 🟡 | финальное согласование ИБ перед выводом в прод (§4.1, белое пятно 3) | [#41](https://github.com/MajorN13/ml_system_design_doc_clustering/issues/41) | нед. 17 (до 19.03.2027) | ИБ, MLE, DevOps |
 
 > [!WARNING]
 > **Открытые вопросы.**
