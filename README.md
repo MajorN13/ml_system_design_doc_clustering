@@ -656,7 +656,7 @@ SLA приведены в разделе 1.2. Поддержка в рабочи
 - `diagrams/risk_tree.py` — дерево причин рисков;
 - `diagrams/arch.py` — схема архитектуры.
 
-Схемы перерисовываются из корня репозитория командой `python diagrams/draw.py . && python diagrams/arch.py . && python diagrams/risk_tree.py .`. Нужен matplotlib и файлы шрифта CMU Sans Serif (`cmu-sans-serif-500-roman.ttf`, `-700-roman.ttf`, `-500-italic.ttf`) в папке `fonts/`.
+Схемы перерисовываются из корня репозитория командой `python diagrams/draw.py . && python diagrams/arch.py . && python diagrams/risk_tree.py .`. Нужен matplotlib; шрифты CMU Sans Serif лежат в папке `fonts/` (лицензия OFL, источник — в `fonts/README.md`).
 
 ---
 

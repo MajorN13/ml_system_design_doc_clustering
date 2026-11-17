@@ -13,7 +13,7 @@ for f in ["cmu-sans-serif-500-roman.ttf", "cmu-sans-serif-700-roman.ttf", "cmu-s
 import dataclasses
 font_manager.fontManager.ttflist = [dataclasses.replace(_e, stretch="normal") if _e.name == "CMU Sans Serif" else _e
                                     for _e in font_manager.fontManager.ttflist]
-plt.rcParams["font.family"] = "CMU Sans Serif"
+plt.rcParams["font.family"] = ["CMU Sans Serif", "DejaVu Sans"]  # DejaVu — запасной для символов, которых нет в CMU (стрелки)
 
 BLUE = "#003366"
 LIGHT = "#F0F0F0"
