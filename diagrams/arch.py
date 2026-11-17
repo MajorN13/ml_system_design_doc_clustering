@@ -15,8 +15,16 @@ plt.rcParams["font.family"] = ["CMU Sans Serif", "DejaVu Sans"]  # DejaVu — з
 
 BLUE, LIGHT, GREEN, AMBER, GRAY = "#003366", "#F0F0F0", "#006400", "#AA6400", "#555555"
 W, H = 6.6, 3.45
-fig = plt.figure(figsize=(W, H))
-ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
+LEG = 0.42   # полоса легенды «белых пятен» под схемой
+fig = plt.figure(figsize=(W, H + LEG))
+ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(-LEG, H); ax.axis("off")
+SPOT = "#FFD84D"
+
+
+def spot(x, y, n):
+    """Метка «белого пятна»: вопрос не решён, есть Issue (README, §4.1 и §6)."""
+    ax.add_patch(Ellipse((x, y), 0.17, 0.17, fc=SPOT, ec=AMBER, lw=0.7, zorder=6))
+    ax.text(x, y - 0.005, str(n), fontsize=5.6, fontweight="bold", ha="center", va="center", zorder=7)
 
 
 def group(x, y, w, h, title, solid=False):
@@ -113,6 +121,21 @@ arr((dag["cx"] - 0.2, dag["b"]), (mon["cx"] - 0.2, mon["t"]), ls=(0, (3, 2)), la
     loff=(0, 0))
 arr((ci["l"] + 0.45, ci["t"]), (ci["l"] + 0.45, 0.78), ls=(0, (1, 1.5)), color=GREEN)
 ax.text(ci["l"] + 0.49, 0.69, "деплой", fontsize=4.8, color=GREEN, ha="left", style="italic")
+
+# ---- белые пятна
+spot(S[3]["r"] - 0.04, S[3]["t"] - 0.03, 1)
+spot(pg["r"] - 0.02, pg["t"] - 0.05, 2)
+spot(ing["r"] - 0.04, ing["t"] - 0.03, 3)
+ax.text(0.1, -0.1, "Белые пятна", fontsize=6.3, fontweight="bold", color=AMBER, va="center")
+spots = ["кто и как загружает файл от бизнеса в S3,\nпроверка шаблона (риск R2)",
+         "общий PostgreSQL — единая точка отказа\nдля API (журнал, кэш, версия)",
+         "архитектура и доступы не согласованы с ИБ:\nSSO, секреты, read-only учётки (риск R14)"]
+for k, txt in enumerate(spots):
+    x0 = 1.05 + k * 1.85
+    spot(x0, -0.1, k + 1)
+    ax.text(x0 + 0.13, -0.1, txt, fontsize=5, va="center", linespacing=1.1)
+ax.text(W - 0.1, -0.33, "не решено, у каждого пункта есть Issue — README, §4.1 и §6", fontsize=4.8, color=GRAY,
+        ha="right", va="center", style="italic")
 
 fig.savefig(f"{OUT}/scheme_architecture.png", dpi=300, facecolor="white")
 print("ok")
