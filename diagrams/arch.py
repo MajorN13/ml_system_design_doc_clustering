@@ -85,7 +85,7 @@ for s in S:
 
 # ---- хранилища
 group(3.15, 0.78, 1.15, 2.6, "Хранилища")
-s3 = cyl(3.25, 2.2, 0.95, 0.82, "S3 + DVC", "витрина признаков\n(parquet),\nверсия = квартал")
+s3 = cyl(3.25, 2.2, 0.95, 0.82, "S3 + DVC", "витрина (parquet),\nверсия = квартал;\nExcel-отчёты")
 pg = cyl(3.25, 0.95, 0.95, 0.9, "PostgreSQL", "текущая версия,\nэталон квартала,\nкэш, журнал")
 arr((dag["r"], dag["cy"] + 0.2), (s3["l"], s3["cy"]), label="parquet", lpos=0.45)
 arr((dag["r"], dag["cy"] - 0.2), (pg["l"], pg["cy"] + 0.1), label="версия", lpos=0.45, loff=(0, -0.13))
@@ -95,11 +95,14 @@ group(4.45, 0.78, 1.33, 2.6, "Kubernetes · dev / prod", solid=True)
 ing = box(4.53, 2.62, 1.17, 0.46, "nginx ingress", "+ oauth2-proxy\n(SSO через AD)", fc="#E6DDF0", ec="#6A4C93")
 ui = box(4.53, 1.82, 1.17, 0.58, "Streamlit UI", "выбор ТК, признаков, k;\nдендрограмма, профили,\nэкспорт в Excel",
          fc="#DCE8F5")
-api = box(4.53, 0.9, 1.17, 0.7, "Clustering API", "FastAPI: POST /clusterings,\nGET /reports/{id}, /health\n"
-          "библиотека: бейзлайн,\nPCA + Ward, выбор k", fc="#DCE8F5")
+api = box(4.53, 0.9, 1.17, 0.7, "Clustering API", "POST /clusterings,\nGET /reports/{id},\n/versions, /health;\n"
+          "бейзлайн, PCA + Ward", fc="#DCE8F5")
 arr((ing["cx"], ing["b"]), (ui["cx"], ui["t"]), both=True)
 arr((ui["cx"], ui["b"]), (api["cx"], api["t"]), both=True, label="REST", loff=(0.13, -0.05))
-arr((api["l"], api["cy"] + 0.2), (s3["r"], s3["cy"] - 0.15), label="чтение витрины", lpos=0.5, loff=(0.02, 0.06))
+# API читает витрину и записывает в S3 Excel-отчёты (README, §4.2 и §4.8)
+arr((s3["r"], s3["cy"] - 0.15), (api["l"], api["cy"] + 0.2), both=True)
+ax.text(4.3, 2.03, "чтение витрины,\nзапись Excel-отчётов", fontsize=4.8, color=GRAY, style="italic", ha="right",
+        va="center", linespacing=1.1)
 arr((api["l"], api["cy"] - 0.1), (pg["r"], pg["cy"] - 0.05), both=True, label="кэш, журнал", loff=(0, 0.03))
 
 # ---- пользователь
